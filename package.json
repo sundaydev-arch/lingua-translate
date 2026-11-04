@@ -1,0 +1,453 @@
+{
+  "name": "lingua-translate",
+  "displayName": "Lingua Translate",
+  "description": "Translate on selection or hover: phonetics, pronunciation, definitions, examples, inline translations and multi-engine translation for VS Code-based IDEs such as VS Code / Cursor / Trae",
+  "version": "0.3.0",
+  "publisher": "lingua-learn",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "categories": [
+    "Education",
+    "Other"
+  ],
+  "keywords": [
+    "translate",
+    "translation",
+    "dictionary",
+    "phonetic",
+    "pronunciation",
+    "hover",
+    "offline",
+    "ecdict"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lingua-learn/lingua-translate"
+  },
+  "bugs": {
+    "url": "https://github.com/lingua-learn/lingua-translate/issues"
+  },
+  "homepage": "https://github.com/lingua-learn/lingua-translate#readme",
+  "activationEvents": [
+    "onCommand:linguaTranslate.translateSelection",
+    "onCommand:linguaTranslate.openSettings",
+    "onCommand:linguaTranslate.toggleHover",
+    "onCommand:linguaTranslate.toggleInline",
+    "onCommand:linguaTranslate.speakSelection",
+    "onCommand:linguaTranslate.addToVocabulary",
+    "onCommand:linguaTranslate.openVocabulary",
+    "onCommand:linguaTranslate.clearCache",
+    "onCommand:linguaTranslate.translateClipboard",
+    "onCommand:linguaTranslate.showHistory",
+    "onCommand:linguaTranslate.showMenu",
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true,
+      "description": "Only reads the current selection and talks to public dictionary/translation services; never executes workspace code."
+    },
+    "virtualWorkspaces": true
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "linguaTranslate.translateSelection",
+        "title": "%command.translateSelection%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.translateHover",
+        "title": "%command.translateHover%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.speakSelection",
+        "title": "%command.speakSelection%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.addToVocabulary",
+        "title": "%command.addToVocabulary%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.openVocabulary",
+        "title": "%command.openVocabulary%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.openSettings",
+        "title": "%command.openSettings%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.toggleHover",
+        "title": "%command.toggleHover%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.toggleInline",
+        "title": "%command.toggleInline%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.clearCache",
+        "title": "%command.clearCache%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.translateClipboard",
+        "title": "%command.translateClipboard%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.showHistory",
+        "title": "%command.showHistory%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.showMenu",
+        "title": "%command.showMenu%",
+        "category": "Lingua"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "linguaTranslate.translateSelection",
+          "when": "editorHasSelection",
+          "group": "9_cutcopypaste@9"
+        },
+        {
+          "command": "linguaTranslate.speakSelection",
+          "when": "editorHasSelection",
+          "group": "9_cutcopypaste@10"
+        },
+        {
+          "command": "linguaTranslate.addToVocabulary",
+          "when": "editorHasSelection",
+          "group": "9_cutcopypaste@11"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "linguaTranslate.translateSelection",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "linguaTranslate.translateHover",
+          "when": "editorTextFocus"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "linguaTranslate.translateSelection",
+        "key": "ctrl+alt+t",
+        "mac": "cmd+alt+t",
+        "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "linguaTranslate.speakSelection",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorTextFocus && editorHasSelection"
+      },
+      {
+        "command": "linguaTranslate.translateHover",
+        "key": "ctrl+alt+h",
+        "mac": "cmd+alt+h",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "Lingua Translate",
+      "properties": {
+        "linguaTranslate.targetLanguage": {
+          "type": "string",
+          "default": "zh-CN",
+          "enum": [
+            "zh-CN",
+            "zh-TW",
+            "en",
+            "ja",
+            "ko",
+            "de",
+            "fr",
+            "es",
+            "ru",
+            "pt"
+          ],
+          "markdownDescription": "%config.targetLanguage%"
+        },
+        "linguaTranslate.engine": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "google",
+            "bing",
+            "mymemory",
+            "libretranslate",
+            "deepl",
+            "azure",
+            "baidu",
+            "youdao",
+            "openai",
+            "claude",
+            "gemini"
+          ],
+          "enumDescriptions": [
+            "%config.engine.auto%",
+            "%config.engine.google%",
+            "%config.engine.bing%",
+            "%config.engine.mymemory%",
+            "%config.engine.libretranslate%",
+            "%config.engine.deepl%",
+            "%config.engine.azure%",
+            "%config.engine.baidu%",
+            "%config.engine.youdao%",
+            "%config.engine.openai%",
+            "%config.engine.claude%",
+            "%config.engine.gemini%"
+          ],
+          "markdownDescription": "%config.engine%"
+        },
+        "linguaTranslate.fallback": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.fallback%"
+        },
+        "linguaTranslate.hover.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.hover.enabled%"
+        },
+        "linguaTranslate.hover.delay": {
+          "type": "number",
+          "default": 300,
+          "minimum": 100,
+          "maximum": 2000,
+          "description": "%config.hover.delay%"
+        },
+        "linguaTranslate.hover.maxLength": {
+          "type": "number",
+          "default": 40,
+          "minimum": 8,
+          "maximum": 200,
+          "description": "%config.hover.maxLength%"
+        },
+        "linguaTranslate.inline.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.inline.enabled%"
+        },
+        "linguaTranslate.inline.mode": {
+          "type": "string",
+          "default": "comment",
+          "enum": [
+            "comment",
+            "string",
+            "both"
+          ],
+          "enumDescriptions": [
+            "%config.inline.mode.comment%",
+            "%config.inline.mode.string%",
+            "%config.inline.mode.both%"
+          ],
+          "description": "%config.inline.mode%"
+        },
+        "linguaTranslate.inline.maxLines": {
+          "type": "number",
+          "default": 200,
+          "minimum": 20,
+          "maximum": 2000,
+          "description": "%config.inline.maxLines%"
+        },
+        "linguaTranslate.dictionary.offline": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.dictionary.offline%"
+        },
+        "linguaTranslate.dictionary.online": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.dictionary.online%"
+        },
+        "linguaTranslate.cache.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.cache.enabled%"
+        },
+        "linguaTranslate.cache.ttlHours": {
+          "type": "number",
+          "default": 168,
+          "minimum": 1,
+          "maximum": 8760,
+          "description": "%config.cache.ttlHours%"
+        },
+        "linguaTranslate.cache.maxEntries": {
+          "type": "number",
+          "default": 5000,
+          "minimum": 100,
+          "maximum": 100000,
+          "description": "%config.cache.maxEntries%"
+        },
+        "linguaTranslate.proxy": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "%config.proxy%"
+        },
+        "linguaTranslate.panelColumn": {
+          "type": "string",
+          "enum": [
+            "beside",
+            "active"
+          ],
+          "enumDescriptions": [
+            "%config.panelColumn.beside%",
+            "%config.panelColumn.active%"
+          ],
+          "default": "beside",
+          "description": "%config.panelColumn%"
+        },
+        "linguaTranslate.autoPlay": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.autoPlay%"
+        },
+        "linguaTranslate.uiLanguage": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "zh-CN",
+            "en"
+          ],
+          "enumDescriptions": [
+            "%config.uiLanguage.auto%",
+            "%config.uiLanguage.zh%",
+            "%config.uiLanguage.en%"
+          ],
+          "description": "%config.uiLanguage%"
+        },
+        "linguaTranslate.glossary": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "markdownDescription": "%config.glossary%"
+        },
+        "linguaTranslate.glossaryPath": {
+          "type": "string",
+          "default": "",
+          "description": "%config.glossaryPath%"
+        },
+        "linguaTranslate.vocabularyPath": {
+          "type": "string",
+          "default": "",
+          "description": "%config.vocabularyPath%"
+        },
+        "linguaTranslate.libretranslate.url": {
+          "type": "string",
+          "default": "",
+          "description": "%config.libretranslate.url%"
+        },
+        "linguaTranslate.libretranslate.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "%config.libretranslate.apiKey%"
+        },
+        "linguaTranslate.deepl.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "%config.deepl.apiKey%"
+        },
+        "linguaTranslate.azure.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "%config.azure.apiKey%"
+        },
+        "linguaTranslate.azure.region": {
+          "type": "string",
+          "default": "",
+          "description": "%config.azure.region%"
+        },
+        "linguaTranslate.baidu.appId": {
+          "type": "string",
+          "default": "",
+          "description": "%config.baidu.appId%"
+        },
+        "linguaTranslate.baidu.appKey": {
+          "type": "string",
+          "default": "",
+          "description": "%config.baidu.appKey%"
+        },
+        "linguaTranslate.openai.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "%config.openai.apiKey%"
+        },
+        "linguaTranslate.openai.baseUrl": {
+          "type": "string",
+          "default": "https://api.openai.com/v1",
+          "description": "%config.openai.baseUrl%"
+        },
+        "linguaTranslate.openai.model": {
+          "type": "string",
+          "default": "gpt-4o-mini",
+          "description": "%config.openai.model%"
+        },
+        "linguaTranslate.claude.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "%config.claude.apiKey%"
+        },
+        "linguaTranslate.claude.baseUrl": {
+          "type": "string",
+          "default": "https://api.anthropic.com",
+          "description": "%config.claude.baseUrl%"
+        },
+        "linguaTranslate.claude.model": {
+          "type": "string",
+          "default": "claude-3-5-haiku-latest",
+          "description": "%config.claude.model%"
+        },
+        "linguaTranslate.gemini.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "%config.gemini.apiKey%"
+        },
+        "linguaTranslate.gemini.model": {
+          "type": "string",
+          "default": "gemini-1.5-flash",
+          "description": "%config.gemini.model%"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "build:ecdict": "node scripts/build-ecdict.mjs",
+    "package": "npm run build && vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

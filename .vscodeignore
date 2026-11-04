@@ -1,0 +1,15 @@
+.vscode/**
+.github/**
+src/**
+test/**
+scripts/**
+node_modules/**
+out/**
+coverage/**
+tsconfig.json
+esbuild.js
+vitest.config.ts
+package-lock.json
+.gitignore
+data/ecdict/*.csv
+*.vsix

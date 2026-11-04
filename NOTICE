@@ -1,0 +1,29 @@
+# NOTICE
+
+本仓库包含第三方数据与接口调用，特此声明。
+
+## ECDICT 离线词库
+
+- 来源：https://github.com/skywind3000/ECDICT
+- 作者：skywind3000
+- 许可证：MIT
+- 使用方式：`scripts/build-ecdict.mjs` 对其 `ecdict.csv` 做裁剪、压缩，生成 `data/ecdict.json.gz`。
+- 裁剪规则见 README「离线词库」章节。原始数据版权归原作者所有。
+
+## 在线服务
+
+扩展会按用户配置调用以下第三方服务，其服务条款与隐私政策由各服务方提供：
+
+- Google Translate（非官方公开端点）
+- Microsoft Edge / Bing Translator（公开令牌端点）
+- MyMemory Translation Memory
+- LibreTranslate
+- 有道词典 / 有道发音
+- 百度翻译 / 百度语音合成
+- DeepL SE
+- Microsoft Azure AI Translator
+- OpenAI
+- Anthropic
+- Google Gemini
+
+扩展本身不隶属于上述任何公司。
