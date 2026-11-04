@@ -482,7 +482,8 @@
     "test:integration:local": "npm run build && node scripts/run-integration.mjs",
     "lint": "eslint .",
     "build:ecdict": "node scripts/build-ecdict.mjs",
-    "package": "npm run build && vsce package --no-dependencies"
+    "package": "npm run build && vsce package --no-dependencies",
+    "publish": "npm run build && vsce publish --no-dependencies"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

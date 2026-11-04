@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
     steps:
       - uses: actions/checkout@v5
 
@@ -35,13 +38,9 @@ jobs:
       # Publish to the VS Code Marketplace automatically once VSCE_PAT is configured
       - name: Publish to Marketplace
         if: env.VSCE_PAT != ''
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: npx @vscode/vsce publish --no-dependencies -p "$VSCE_PAT"
 
       # Publish to Open VSX automatically once OVSX_PAT is configured (used by Cursor / Windsurf, etc.)
       - name: Publish to Open VSX
         if: env.OVSX_PAT != ''
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: npx ovsx publish *.vsix -p "$OVSX_PAT"
