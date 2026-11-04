@@ -32,12 +32,12 @@ jobs:
         run: npm run build
 
       - name: Package VSIX
-        run: npx @vscode/vsce package --no-dependencies
+        run: npm run package
 
       - uses: actions/upload-artifact@v5
         with:
           name: vsix
-          path: '*.vsix'
+          path: 'release/*.vsix'
           if-no-files-found: error
 
   integration:

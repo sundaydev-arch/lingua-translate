@@ -15,4 +15,5 @@ vitest.config.ts
 package-lock.json
 .gitignore
 data/ecdict/*.csv
+release/**
 *.vsix

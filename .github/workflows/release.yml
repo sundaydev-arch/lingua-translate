@@ -27,12 +27,12 @@ jobs:
       - run: npm run build
 
       - name: Package VSIX
-        run: npx @vscode/vsce package --no-dependencies
+        run: npm run package
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: '*.vsix'
+          files: 'release/*.vsix'
           generate_release_notes: true
 
       # Publish to the VS Code Marketplace automatically once VSCE_PAT is configured
@@ -43,4 +43,4 @@ jobs:
       # Publish to Open VSX automatically once OVSX_PAT is configured (used by Cursor / Windsurf, etc.)
       - name: Publish to Open VSX
         if: env.OVSX_PAT != ''
-        run: npx ovsx publish *.vsix -p "$OVSX_PAT"
+        run: npx ovsx publish release/*.vsix -p "$OVSX_PAT"

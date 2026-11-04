@@ -43,14 +43,14 @@ Translate the selection or hover a word — a universal extension for VS Code-ba
 ### Install from VSIX
 
 ```bash
-code --install-extension lingua-translate-0.4.0.vsix --force
-cursor --install-extension lingua-translate-0.4.0.vsix --force
+code --install-extension release/lingua-translate-0.4.0.vsix --force
+cursor --install-extension release/lingua-translate-0.4.0.vsix --force
 ```
 
 Trae CN:
 
 ```bash
-"/Applications/Trae CN.app/Contents/Resources/app/bin/trae-cn" --install-extension lingua-translate-0.4.0.vsix --force
+"/Applications/Trae CN.app/Contents/Resources/app/bin/trae-cn" --install-extension release/lingua-translate-0.4.0.vsix --force
 ```
 
 Reload the window after installing (`Cmd+Shift+P` → `Developer: Reload Window`).

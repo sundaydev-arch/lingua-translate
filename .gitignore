@@ -3,6 +3,7 @@ dist/
 out/
 coverage/
 .vscode-test/
+release/
 *.vsix
 .DS_Store
 data/ecdict/*.csv

@@ -43,14 +43,14 @@
 ### 从 VSIX 安装
 
 ```bash
-code --install-extension lingua-translate-0.4.0.vsix --force
-cursor --install-extension lingua-translate-0.4.0.vsix --force
+code --install-extension release/lingua-translate-0.4.0.vsix --force
+cursor --install-extension release/lingua-translate-0.4.0.vsix --force
 ```
 
 Trae CN：
 
 ```bash
-"/Applications/Trae CN.app/Contents/Resources/app/bin/trae-cn" --install-extension lingua-translate-0.4.0.vsix --force
+"/Applications/Trae CN.app/Contents/Resources/app/bin/trae-cn" --install-extension release/lingua-translate-0.4.0.vsix --force
 ```
 
 安装后重载窗口（`Cmd+Shift+P` → `Developer: Reload Window`）。
