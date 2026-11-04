@@ -13,14 +13,14 @@ export type EngineId =
   | 'gemini';
 
 export const ENGINE_NAMES: Record<EngineId, string> = {
-  google: 'Google 翻译',
-  bing: 'Bing 翻译',
+  google: 'Google Translate',
+  bing: 'Bing Translate',
   mymemory: 'MyMemory',
   libretranslate: 'LibreTranslate',
   deepl: 'DeepL',
-  azure: 'Azure 翻译',
-  baidu: '百度翻译',
-  youdao: '有道翻译',
+  azure: 'Azure Translator',
+  baidu: 'Baidu Translate',
+  youdao: 'Youdao Translate',
   openai: 'OpenAI',
   claude: 'Claude',
   gemini: 'Gemini'
@@ -86,6 +86,8 @@ export interface LinguaConfig {
   claudeModel: string;
   geminiApiKey: string;
   geminiModel: string;
+  ocrApiKey: string;
+  ocrLanguage: string;
 }
 
 /* ------------------------------ Lookup results ------------------------------ */
@@ -149,7 +151,8 @@ export interface TextResult {
   translation: string;
   targetLang: string;
   sourceLang: string;
-  badge: string;
+  /** Stable badge key rendered by the panel in the current UI language. */
+  badge: 'phrase' | 'sentence' | 'glossary';
   autoPlay: boolean;
   sources: string;
   englishText?: string;

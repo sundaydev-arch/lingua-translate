@@ -23,7 +23,7 @@ function mark(ok: boolean): void {
 
 /** translate.googleapis.com's at client returns [[["translation","source",…],…],null,"en",…]; clients5 returns a flat string array. */
 function parsePayload(data: unknown): string {
-  if (!Array.isArray(data)) throw new Error('Google 返回格式异常');
+  if (!Array.isArray(data)) throw new Error('Google returned an unexpected payload');
   if (typeof data[0] === 'string') {
     const flat = data.filter((item): item is string => typeof item === 'string').join('').trim();
     if (flat) return flat;
@@ -35,15 +35,15 @@ function parsePayload(data: unknown): string {
       .trim();
     if (nested) return nested;
   }
-  throw new Error('Google 未返回内容');
+  throw new Error('Google returned no text');
 }
 
 export const googleProvider: Provider = {
   id: 'google',
-  name: 'Google 翻译',
+  name: 'Google Translate',
   isConfigured: () => true,
   async translate(request, config): Promise<TranslationOutcome> {
-    if (!usable()) throw new Error('Google 翻译暂不可用（冷却中）');
+    if (!usable()) throw new Error('Google Translate is cooling down');
 
     const source = providerLanguage(request.source, 'google');
     const target = providerLanguage(request.target, 'google');
@@ -65,7 +65,7 @@ export const googleProvider: Provider = {
       return {
         text: results.join('\n'),
         providerId: 'google',
-        provider: 'Google 翻译',
+        provider: 'Google Translate',
         target: request.target,
         detectedSource: request.source
       };

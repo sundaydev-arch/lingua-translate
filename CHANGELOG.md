@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+- Added screenshot OCR translation: `Lingua: OCR screenshot and translate` captures a screen region (macOS) or picks an image, recognizes it with OCR.space, then reuses the normal lookup pipeline (`ocr.apiKey`, `ocr.language`)
+- Added batch translation for Markdown / text files and whole folders, with paragraph-aware chunking, preserved fenced code blocks and non-destructive `<name>.<target>.md` output
+- Translated the data layer to English: engine names, dictionary source labels, phonetic tags and stable badge keys
+- Added real UI screenshots to both READMEs (panel, vocabulary, settings)
+- Added ESLint (`typescript-eslint`) with a flat config and a CI lint step
+- Added VS Code extension-host integration tests (activation, command registration, settings defaults) with `@vscode/test-cli`; CI runs them under xvfb
+
 ## 0.3.0
 
 UX and workflow improvements:

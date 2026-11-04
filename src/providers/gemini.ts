@@ -27,7 +27,7 @@ export const geminiProvider: Provider = {
     );
 
     const text = data?.candidates?.[0]?.content?.parts?.map((part) => part.text || '').join('').trim();
-    if (!text) throw new Error(`Gemini 未返回译文${data?.error?.message ? `：${data.error.message}` : ''}`);
+    if (!text) throw new Error(`Gemini returned no text${data?.error?.message ? `: ${data.error.message}` : ''}`);
 
     return {
       text,

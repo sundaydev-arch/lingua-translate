@@ -27,7 +27,7 @@ export const deeplProvider: Provider = {
 
     const data = await postForm<DeepLResponse>(endpoint, fields, { proxy: config.proxy, timeout: 12000 });
     const translated = data?.translations?.[0]?.text;
-    if (!translated) throw new Error(`DeepL 未返回译文${data?.message ? `：${data.message}` : ''}`);
+    if (!translated) throw new Error(`DeepL returned no text${data?.message ? `: ${data.message}` : ''}`);
 
     return {
       text: translated,

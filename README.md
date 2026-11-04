@@ -24,21 +24,33 @@ Translate the selection or hover a word — a universal extension for VS Code-ba
 - **Vocabulary notebook**: search, sort, pronounce, copy and delete entries, and export the whole notebook to Markdown or CSV.
 - **Resilient panel**: loading skeletons, friendly network errors, and inline Retry / Settings actions when a request fails.
 - **Multilingual UI**: follows the IDE language; Simplified Chinese / English.
+- **Screenshot OCR**: `Lingua: OCR screenshot and translate` captures part of the screen (macOS) or opens an image, recognizes the text with OCR.space, then reuses the normal dictionary / translation pipeline.
+- **Batch translation**: translate a whole `.md` / `.txt` file or an entire folder. Fenced code blocks are preserved and output is written next to the source as `name.<target>.md` — originals are never overwritten.
 - Works in untrusted and virtual workspaces.
+
+## Screenshots
+
+| Translation panel | Vocabulary notebook |
+| --- | --- |
+| ![Translation panel](https://raw.githubusercontent.com/sundaydev-arch/lingua-translate/main/media/panel.png) | ![Vocabulary notebook](https://raw.githubusercontent.com/sundaydev-arch/lingua-translate/main/media/vocabulary.png) |
+
+![Settings UI](https://raw.githubusercontent.com/sundaydev-arch/lingua-translate/main/media/settings.png)
+
+> These images are previews of the extension UI in the default dark theme.
 
 ## Installation
 
 ### Install from VSIX
 
 ```bash
-code --install-extension lingua-translate-0.3.0.vsix --force
-cursor --install-extension lingua-translate-0.3.0.vsix --force
+code --install-extension lingua-translate-0.4.0.vsix --force
+cursor --install-extension lingua-translate-0.4.0.vsix --force
 ```
 
 Trae CN:
 
 ```bash
-"/Applications/Trae CN.app/Contents/Resources/app/bin/trae-cn" --install-extension lingua-translate-0.3.0.vsix --force
+"/Applications/Trae CN.app/Contents/Resources/app/bin/trae-cn" --install-extension lingua-translate-0.4.0.vsix --force
 ```
 
 Reload the window after installing (`Cmd+Shift+P` → `Developer: Reload Window`).
@@ -53,6 +65,8 @@ Reload the window after installing (`Cmd+Shift+P` → `Developer: Reload Window`
 | Hover translation | Hover the mouse | Hover the mouse |
 | Add to vocabulary | Context menu / Code Action | Context menu / Code Action |
 | Translate clipboard | Command palette | Command palette |
+| OCR screenshot | Command palette / Quick menu | Command palette / Quick menu |
+| Translate whole file / folder | Command palette / Quick menu | Command palette / Quick menu |
 | Recent translations | Status bar / Quick menu | Status bar / Quick menu |
 
 All commands are also available in the command palette under `Lingua: ...`. Clicking the `Lingua` status-bar item opens the quick menu with translate, vocabulary, history, settings and toggle actions.
@@ -104,6 +118,9 @@ Configure them in the settings UI (command `Lingua: Open Lingua settings`) or in
   "linguaTranslate.cache.maxEntries": 5000,
 
   "linguaTranslate.proxy": "", // e.g. http://127.0.0.1:7890
+  "linguaTranslate.ocr.apiKey": "helloworld",
+  "linguaTranslate.ocr.language": "eng",
+
   "linguaTranslate.deepl.apiKey": "",
   "linguaTranslate.openai.apiKey": ""
 }
@@ -117,6 +134,23 @@ Proxy resolution order:
 2. Editor `http.proxy`
 3. Environment variables `HTTPS_PROXY` / `HTTP_PROXY` / `ALL_PROXY`
 4. macOS system proxy (`scutil --proxy`)
+
+### Screenshot OCR
+
+`Lingua: OCR screenshot and translate` (`linguaTranslate.ocrScreenshot`):
+
+1. On macOS, `screencapture -i` lets you drag a region; on other platforms an image picker opens.
+2. The image is sent to [OCR.space](https://ocr.space/ocrapi) and recognized as plain text.
+3. The text goes through the same dictionary / translation pipeline as a normal selection.
+
+The default `helloworld` key is a public demo key for low-volume use. Register a free key and set `linguaTranslate.ocr.apiKey`; choose the source script with `linguaTranslate.ocr.language` (`eng`, `chs`, `jpn`, `kor`, `deu`, `fra`, …). OCR requests go direct (the proxy setting is used for translation engines only).
+
+### Batch translation
+
+- `Lingua: Translate whole file (.md / .txt)` — pick one or more files.
+- `Lingua: Translate a folder (.md / .txt)` — recursively translates every Markdown / text file.
+
+Long documents are split into paragraph-aware chunks (about 1200 characters) and sent sequentially. Fenced code blocks are left untouched. Results are written next to each source file as `<name>.<target>.md` / `.txt` (for example `guide.zh-CN.md`), so the originals are never overwritten; files already ending in the target suffix are skipped on folder runs.
 
 ### Glossary
 
@@ -199,10 +233,13 @@ npm run build:ecdict -- --input /tmp/ecdict.csv --output data/ecdict.json.gz
 
 ```bash
 npm install
-npm run build        # esbuild → dist/extension.js
-npm run typecheck    # tsc --noEmit
-npm test             # vitest
-npm run package      # build the .vsix
+npm run build              # esbuild → dist/extension.js
+npm run typecheck          # tsc --noEmit
+npm run lint               # ESLint (typescript-eslint)
+npm test                   # vitest unit tests
+npm run test:integration   # extension-host tests (downloads VS Code on first run)
+npm run test:integration:local  # same tests using the installed VS Code
+npm run package            # build the .vsix
 ```
 
 Debugging: open this repository in VS Code and press `F5` to launch the extension development host.

@@ -28,7 +28,7 @@ export const myMemoryProvider: Provider = {
       const data = await getJson<MyMemoryResponse>(url, { proxy: config.proxy, timeout: 8000 });
       const translated = data?.responseData?.translatedText;
       if (!translated) {
-        throw new Error(`MyMemory 未返回内容${data?.responseDetails ? `：${data.responseDetails}` : ''}`);
+        throw new Error(`MyMemory returned no content${data?.responseDetails ? `: ${data.responseDetails}` : ''}`);
       }
       results.push(decodeEntities(translated));
     }

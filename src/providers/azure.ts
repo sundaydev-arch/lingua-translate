@@ -9,7 +9,7 @@ interface AzureResponse {
 
 export const azureProvider: Provider = {
   id: 'azure',
-  name: 'Azure 翻译',
+  name: 'Azure Translator',
   isConfigured: (config) => Boolean(config.azureApiKey),
   async translate(request, config): Promise<TranslationOutcome> {
     const target = providerLanguage(request.target, 'azure');
@@ -34,14 +34,14 @@ export const azureProvider: Provider = {
         headers
       });
       const text = data?.[0]?.translations?.[0]?.text;
-      if (!text) throw new Error(`Azure 未返回译文${data?.[0]?.error?.message ? `：${data[0].error.message}` : ''}`);
+      if (!text) throw new Error(`Azure returned no text${data?.[0]?.error?.message ? `: ${data[0].error.message}` : ''}`);
       results.push(text);
     }
 
     return {
       text: results.join('\n'),
       providerId: 'azure',
-      provider: 'Azure 翻译',
+      provider: 'Azure Translator',
       target: request.target,
       detectedSource: request.source
     };

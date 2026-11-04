@@ -290,7 +290,7 @@ export function renderPanelHtml(
 
   function phoneticHtml(data) {
     const list = (data.phonetics || []).map(function (item) {
-      const voice = item.label === '英' ? 'uk' : 'us';
+      const voice = item.label === 'UK' ? 'uk' : 'us';
       return '<span class="phon">' +
         (item.label ? '<span class="tag">' + esc(item.label) + '</span>' : '') +
         '<span class="ipa">/' + esc(item.text) + '/</span>' +
@@ -369,7 +369,7 @@ export function renderPanelHtml(
   function renderText(data) {
     const isZh = data.sourceLang === 'zh-CN';
     const english = data.englishText || '';
-    badgeEl.textContent = data.badge === '词语' ? S.badgePhrase : (data.badge === '术语表' ? S.badgeGlossary : S.badgeSentence);
+    badgeEl.textContent = data.badge === 'phrase' ? S.badgePhrase : (data.badge === 'glossary' ? S.badgeGlossary : S.badgeSentence);
 
     const phonetic = data.englishPhonetic
       ? '<span class="phon"><span class="ipa">/' + esc(data.englishPhonetic) + '/</span></span>'

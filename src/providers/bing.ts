@@ -50,10 +50,10 @@ async function getSession(proxy: string): Promise<BingSession> {
   const ig = html.match(/IG:"([^"]+)"/)?.[1];
   const iid = html.match(/data-iid="([^"]+)"/)?.[1];
   const abuse = html.match(/params_AbusePreventionHelper\s*=\s*\[([^\]]+)\]/)?.[1];
-  if (!ig || !iid || !abuse) throw new Error('Bing 翻译页面结构已变化，无法获取令牌');
+  if (!ig || !iid || !abuse) throw new Error('Bing page layout changed; token unavailable');
 
   const [key, token] = abuse.split(',').map((value) => value.trim().replace(/^"|"$/g, ''));
-  if (!key || !token) throw new Error('Bing 翻译令牌解析失败');
+  if (!key || !token) throw new Error('Bing token could not be parsed');
 
   session = { proxy, ig, iid, key, token, counter: 0, createdAt: Date.now() };
   return session;
@@ -61,7 +61,7 @@ async function getSession(proxy: string): Promise<BingSession> {
 
 export const bingProvider: Provider = {
   id: 'bing',
-  name: 'Bing 翻译',
+  name: 'Bing Translate',
   isConfigured: () => true,
   async translate(request, config): Promise<TranslationOutcome> {
     const current = await getSession(config.proxy);
@@ -95,14 +95,14 @@ export const bingProvider: Provider = {
     );
 
     const payload = Array.isArray(data) ? data[0] : data;
-    if (payload?.ShowCaptcha) throw new Error('Bing 触发了人机验证');
+    if (payload?.ShowCaptcha) throw new Error('Bing requested a CAPTCHA');
     const text = payload?.translations?.[0]?.text;
-    if (!text) throw new Error('Bing 未返回译文');
+    if (!text) throw new Error('Bing returned no translation');
 
     return {
       text,
       providerId: 'bing',
-      provider: 'Bing 翻译',
+      provider: 'Bing Translate',
       target: request.target,
       detectedSource: payload.detectedLanguage?.language || request.source
     };

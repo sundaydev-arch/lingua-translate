@@ -11,7 +11,7 @@ interface BaiduResponse {
 
 export const baiduProvider: Provider = {
   id: 'baidu',
-  name: '百度翻译',
+  name: 'Baidu Translate',
   isConfigured: (config) => Boolean(config.baiduAppId && config.baiduAppKey),
   async translate(request, config): Promise<TranslationOutcome> {
     const chunks = splitChunks(request.text, 1000);
@@ -31,15 +31,15 @@ export const baiduProvider: Provider = {
         `&salt=${salt}&sign=${sign}`;
 
       const data = await getJson<BaiduResponse>(url, { proxy: config.proxy, timeout: 10000 });
-      if (data?.error_code) throw new Error(`百度翻译错误 ${data.error_code}：${data.error_msg || ''}`);
-      if (!data?.trans_result?.length) throw new Error('百度翻译未返回译文');
+      if (data?.error_code) throw new Error(`Baidu Translate error ${data.error_code}: ${data.error_msg || ''}`);
+      if (!data?.trans_result?.length) throw new Error('Baidu Translate returned no translation');
       results.push(data.trans_result.map((item) => item.dst || '').join('\n'));
     }
 
     return {
       text: results.join('\n'),
       providerId: 'baidu',
-      provider: '百度翻译',
+      provider: 'Baidu Translate',
       target: request.target,
       detectedSource: request.source
     };

@@ -44,6 +44,7 @@ export interface UIStrings {
   sectionDictionary: string;
   sectionCache: string;
   sectionProxy: string;
+  sectionOcr: string;
   sectionKeys: string;
   openVocabulary: string;
   retry: string;
@@ -78,6 +79,17 @@ export interface UIStrings {
   menuToggleHover: string;
   menuToggleInline: string;
   menuClearCache: string;
+  menuOcr: string;
+  menuTranslateFile: string;
+  menuTranslateFolder: string;
+  ocrEmpty: string;
+  ocrFailed: string;
+  batchPickFile: string;
+  batchPickFolder: string;
+  batchNoFiles: string;
+  batchProgress: string;
+  batchDone: string;
+  batchFailed: string;
   clickToOpen: string;
   settings: Record<string, string>;
 }
@@ -128,6 +140,7 @@ const zh: UIStrings = {
   sectionDictionary: '词典与术语',
   sectionCache: '缓存',
   sectionProxy: '网络代理',
+  sectionOcr: '识屏翻译（OCR）',
   sectionKeys: 'API Key',
   openVocabulary: '打开生词本',
   retry: '重试',
@@ -162,6 +175,17 @@ const zh: UIStrings = {
   menuToggleHover: '开关悬停翻译',
   menuToggleInline: '开关内联译文',
   menuClearCache: '清除翻译缓存',
+  menuOcr: '识屏翻译（截图 OCR）',
+  menuTranslateFile: '翻译整个文件',
+  menuTranslateFolder: '翻译整个目录',
+  ocrEmpty: 'Lingua：截图中没有识别到文字。',
+  ocrFailed: 'Lingua：识屏翻译失败（{reason}）',
+  batchPickFile: '选择要翻译的文件',
+  batchPickFolder: '选择要翻译的目录',
+  batchNoFiles: 'Lingua：没有找到 .md 或 .txt 文件。',
+  batchProgress: '正在翻译 {name}…',
+  batchDone: 'Lingua：已翻译 {count} 个文件。',
+  batchFailed: 'Lingua：批量翻译失败（{reason}）',
   clickToOpen: '点击打开翻译面板',
   settings: {
     engine: '翻译引擎',
@@ -187,6 +211,9 @@ const zh: UIStrings = {
     cacheMaxEntries: '缓存条目上限',
     proxy: 'HTTP 代理',
     proxyHint: '例如 http://127.0.0.1:7890。留空时自动读取编辑器、环境变量或系统代理。',
+    ocrApiKey: 'OCR.space API Key',
+    ocrLanguage: 'OCR 语言',
+    ocrHint: '默认 helloworld 为公共测试 Key，仅适合低频使用；可免费注册 OCR.space 获取自己的 Key。语言代码如 eng、chs、jpn。',
     credentials: 'API Key 与自建服务',
     libreUrl: 'LibreTranslate 地址',
     libreKey: 'LibreTranslate API Key',
@@ -282,6 +309,7 @@ const en: UIStrings = {
   sectionDictionary: 'Dictionary & glossary',
   sectionCache: 'Cache',
   sectionProxy: 'Proxy',
+  sectionOcr: 'Screenshot OCR',
   sectionKeys: 'API keys',
   openVocabulary: 'Open vocabulary',
   retry: 'Retry',
@@ -316,6 +344,17 @@ const en: UIStrings = {
   menuToggleHover: 'Toggle hover translation',
   menuToggleInline: 'Toggle inline translation',
   menuClearCache: 'Clear translation cache',
+  menuOcr: 'OCR screenshot and translate',
+  menuTranslateFile: 'Translate whole file',
+  menuTranslateFolder: 'Translate folder',
+  ocrEmpty: 'Lingua: no text was recognized in the image.',
+  ocrFailed: 'Lingua: OCR translation failed ({reason}).',
+  batchPickFile: 'Select a file to translate',
+  batchPickFolder: 'Select a folder to translate',
+  batchNoFiles: 'Lingua: no .md or .txt files were found.',
+  batchProgress: 'Translating {name}…',
+  batchDone: 'Lingua: translated {count} file(s).',
+  batchFailed: 'Lingua: batch translation failed ({reason}).',
   clickToOpen: 'Open the translation panel',
   settings: {
     engine: 'Translation engine',
@@ -341,6 +380,9 @@ const en: UIStrings = {
     cacheMaxEntries: 'Maximum cache entries',
     proxy: 'HTTP proxy',
     proxyHint: 'For example http://127.0.0.1:7890. Leave empty to use the editor, environment or system proxy.',
+    ocrApiKey: 'OCR.space API key',
+    ocrLanguage: 'OCR language',
+    ocrHint: 'The default helloworld key is a public demo key for low-volume use; get your own free key from OCR.space. Language codes include eng, chs and jpn.',
     credentials: 'API keys & self-hosted services',
     libreUrl: 'LibreTranslate URL',
     libreKey: 'LibreTranslate API key',

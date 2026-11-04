@@ -39,7 +39,9 @@ function config(glossary: Record<string, string>): LinguaConfig {
     claudeBaseUrl: 'https://api.anthropic.com',
     claudeModel: 'claude-3-5-haiku-latest',
     geminiApiKey: '',
-    geminiModel: 'gemini-1.5-flash'
+    geminiModel: 'gemini-1.5-flash',
+    ocrApiKey: 'helloworld',
+    ocrLanguage: 'eng'
   };
 }
 

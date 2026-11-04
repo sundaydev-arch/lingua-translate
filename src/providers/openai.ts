@@ -31,7 +31,7 @@ export const openAiProvider: Provider = {
     );
 
     const text = data?.choices?.[0]?.message?.content?.trim();
-    if (!text) throw new Error(`OpenAI 未返回译文${data?.error?.message ? `：${data.error.message}` : ''}`);
+    if (!text) throw new Error(`OpenAI returned no text${data?.error?.message ? `: ${data.error.message}` : ''}`);
 
     return {
       text,

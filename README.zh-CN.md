@@ -24,21 +24,33 @@
 - **生词本**：支持搜索、排序、发音、复制、删除，并可导出为 Markdown 或 CSV。
 - **可靠面板**：加载骨架屏、友好的网络错误提示，失败时可直接重试或打开设置。
 - **多语言 UI**：跟随 IDE 语言，支持简体中文 / English。
+- **识屏翻译**：`Lingua: 识屏翻译（截图 OCR）` 在 macOS 上框选屏幕区域（其他平台选择图片），用 OCR.space 识别文字后复用词典 / 翻译链路。
+- **批量翻译**：翻译整个 `.md` / `.txt` 文件或整个目录；保留围栏代码块，结果写到源文件旁的 `名称.<目标语言>.md`，绝不覆盖原文件。
 - 兼容不受信任工作区与虚拟工作区。
+
+## 界面预览
+
+| 翻译面板 | 生词本 |
+| --- | --- |
+| ![翻译面板](https://raw.githubusercontent.com/sundaydev-arch/lingua-translate/main/media/panel.png) | ![生词本](https://raw.githubusercontent.com/sundaydev-arch/lingua-translate/main/media/vocabulary.png) |
+
+![设置页](https://raw.githubusercontent.com/sundaydev-arch/lingua-translate/main/media/settings.png)
+
+> 以上为扩展在默认深色主题下的界面预览。
 
 ## 安装
 
 ### 从 VSIX 安装
 
 ```bash
-code --install-extension lingua-translate-0.3.0.vsix --force
-cursor --install-extension lingua-translate-0.3.0.vsix --force
+code --install-extension lingua-translate-0.4.0.vsix --force
+cursor --install-extension lingua-translate-0.4.0.vsix --force
 ```
 
 Trae CN：
 
 ```bash
-"/Applications/Trae CN.app/Contents/Resources/app/bin/trae-cn" --install-extension lingua-translate-0.3.0.vsix --force
+"/Applications/Trae CN.app/Contents/Resources/app/bin/trae-cn" --install-extension lingua-translate-0.4.0.vsix --force
 ```
 
 安装后重载窗口（`Cmd+Shift+P` → `Developer: Reload Window`）。
@@ -53,6 +65,8 @@ Trae CN：
 | 悬停翻译 | 鼠标悬停 | 鼠标悬停 |
 | 加入生词本 | 右键菜单 / Code Action | 右键菜单 / Code Action |
 | 翻译剪贴板 | 命令面板 | 命令面板 |
+| 识屏翻译（OCR） | 命令面板 / 快捷菜单 | 命令面板 / 快捷菜单 |
+| 翻译整个文件 / 目录 | 命令面板 / 快捷菜单 | 命令面板 / 快捷菜单 |
 | 最近翻译 | 状态栏 / 快捷菜单 | 状态栏 / 快捷菜单 |
 
 也可以在命令面板执行 `Lingua: ...` 开头的命令。点击状态栏的 `Lingua` 项会打开快捷菜单（翻译、生词本、历史、设置与开关）。
@@ -104,6 +118,9 @@ Trae CN：
   "linguaTranslate.cache.maxEntries": 5000,
 
   "linguaTranslate.proxy": "", // 例如 http://127.0.0.1:7890
+  "linguaTranslate.ocr.apiKey": "helloworld",
+  "linguaTranslate.ocr.language": "eng",
+
   "linguaTranslate.deepl.apiKey": "",
   "linguaTranslate.openai.apiKey": ""
 }
@@ -117,6 +134,23 @@ Trae CN：
 2. 编辑器 `http.proxy`
 3. 环境变量 `HTTPS_PROXY` / `HTTP_PROXY` / `ALL_PROXY`
 4. macOS 系统代理（`scutil --proxy`）
+
+### 识屏翻译
+
+`Lingua: 识屏翻译（截图 OCR）`（命令 `linguaTranslate.ocrScreenshot`）：
+
+1. macOS 下调用 `screencapture -i` 框选区域；其他平台弹出图片选择器。
+2. 图片发送到 [OCR.space](https://ocr.space/ocrapi) 识别为纯文本。
+3. 识别结果走与普通选中文本相同的词典 / 翻译链路。
+
+默认 `helloworld` 是公共测试 Key，仅适合低频使用；建议注册免费 Key 并填入 `linguaTranslate.ocr.apiKey`。用 `linguaTranslate.ocr.language` 指定源语言文字（`eng`、`chs`、`jpn`、`kor`、`deu`、`fra` 等）。OCR 请求为直连，代理设置只作用于翻译引擎。
+
+### 批量翻译
+
+- `Lingua: 翻译整个文件（.md / .txt）`：选择一个或多个文件。
+- `Lingua: 翻译整个目录（.md / .txt）`：递归翻译目录下所有 Markdown / 文本文件。
+
+长文档按段落切成约 1200 字符的块并顺序发送；围栏代码块保持原样。结果写到源文件旁，命名为 `<原名>.<目标语言>.md` / `.txt`（如 `guide.zh-CN.md`），不覆盖原文；目录模式下会跳过已带目标语言后缀的文件。
 
 ### 术语表
 
@@ -199,10 +233,13 @@ npm run build:ecdict -- --input /tmp/ecdict.csv --output data/ecdict.json.gz
 
 ```bash
 npm install
-npm run build        # esbuild → dist/extension.js
-npm run typecheck    # tsc --noEmit
-npm test             # vitest
-npm run package      # 生成 .vsix
+npm run build              # esbuild → dist/extension.js
+npm run typecheck          # tsc --noEmit
+npm run lint               # ESLint（typescript-eslint）
+npm test                   # vitest 单元测试
+npm run test:integration   # 扩展宿主集成测试（首次会下载 VS Code）
+npm run test:integration:local  # 用本机已安装的 VS Code 运行同样的测试
+npm run package            # 生成 .vsix
 ```
 
 调试：用 VS Code 打开本仓库，按 `F5` 启动扩展开发宿主。

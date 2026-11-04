@@ -8,6 +8,9 @@ out/**
 coverage/**
 tsconfig.json
 esbuild.js
+eslint.config.mjs
+.vscode-test.mjs
+.vscode-test/**
 vitest.config.ts
 package-lock.json
 .gitignore

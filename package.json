@@ -2,8 +2,8 @@
   "name": "lingua-translate",
   "displayName": "Lingua Translate",
   "description": "Translate on selection or hover: phonetics, pronunciation, definitions, examples, inline translations and multi-engine translation for VS Code-based IDEs such as VS Code / Cursor / Trae",
-  "version": "0.3.0",
-  "publisher": "lingua-learn",
+  "version": "0.4.0",
+  "publisher": "sundaydev-arch",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -25,12 +25,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/lingua-learn/lingua-translate"
+    "url": "https://github.com/sundaydev-arch/lingua-translate"
   },
   "bugs": {
-    "url": "https://github.com/lingua-learn/lingua-translate/issues"
+    "url": "https://github.com/sundaydev-arch/lingua-translate/issues"
   },
-  "homepage": "https://github.com/lingua-learn/lingua-translate#readme",
+  "homepage": "https://github.com/sundaydev-arch/lingua-translate#readme",
   "activationEvents": [
     "onCommand:linguaTranslate.translateSelection",
     "onCommand:linguaTranslate.openSettings",
@@ -43,6 +43,9 @@
     "onCommand:linguaTranslate.translateClipboard",
     "onCommand:linguaTranslate.showHistory",
     "onCommand:linguaTranslate.showMenu",
+    "onCommand:linguaTranslate.ocrScreenshot",
+    "onCommand:linguaTranslate.translateFile",
+    "onCommand:linguaTranslate.translateFolder",
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
@@ -114,6 +117,21 @@
         "command": "linguaTranslate.showMenu",
         "title": "%command.showMenu%",
         "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.ocrScreenshot",
+        "title": "%command.ocrScreenshot%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.translateFile",
+        "title": "%command.translateFile%",
+        "category": "Lingua"
+      },
+      {
+        "command": "linguaTranslate.translateFolder",
+        "title": "%command.translateFolder%",
+        "category": "Lingua"
       }
     ],
     "menus": {
@@ -132,6 +150,18 @@
           "command": "linguaTranslate.addToVocabulary",
           "when": "editorHasSelection",
           "group": "9_cutcopypaste@11"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "linguaTranslate.translateFile",
+          "when": "resourceExtname =~ /\\.(md|markdown|txt)$/ && !explorerResourceIsFolder",
+          "group": "lingua@1"
+        },
+        {
+          "command": "linguaTranslate.translateFolder",
+          "when": "explorerResourceIsFolder",
+          "group": "lingua@2"
         }
       ],
       "commandPalette": [
@@ -303,6 +333,16 @@
           "default": "",
           "markdownDescription": "%config.proxy%"
         },
+        "linguaTranslate.ocr.apiKey": {
+          "type": "string",
+          "default": "helloworld",
+          "description": "%config.ocr.apiKey%"
+        },
+        "linguaTranslate.ocr.language": {
+          "type": "string",
+          "default": "eng",
+          "description": "%config.ocr.language%"
+        },
         "linguaTranslate.panelColumn": {
           "type": "string",
           "enum": [
@@ -438,16 +478,24 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "tsc --noEmit",
+    "test:integration": "npm run build && vscode-test",
+    "test:integration:local": "npm run build && node scripts/run-integration.mjs",
+    "lint": "eslint .",
     "build:ecdict": "node scripts/build-ecdict.mjs",
     "package": "npm run build && vsce package --no-dependencies"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.85.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
     "@vscode/vsce": "^3.2.1",
     "esbuild": "^0.24.2",
+    "eslint": "^10.14.0",
+    "mocha": "^12.0.3",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.72.1",
     "vitest": "^2.1.8"
   }
 }

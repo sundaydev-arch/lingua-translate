@@ -9,7 +9,7 @@ interface YoudaoResponse {
 /** Youdao web dictionary endpoint: no key required; sentence requests return fanyi.tran, word requests return dictionary senses. */
 export const youdaoProvider: Provider = {
   id: 'youdao',
-  name: '有道翻译',
+  name: 'Youdao Translate',
   isConfigured: () => true,
   async translate(request, config): Promise<TranslationOutcome> {
     const data = await getJson<YoudaoResponse>(
@@ -29,15 +29,15 @@ export const youdaoProvider: Provider = {
           }
         }
       }
-      translated = items.slice(0, 4).join('；');
+      translated = items.slice(0, 4).join('; ');
     }
 
-    if (!translated) throw new Error('有道未返回译文');
+    if (!translated) throw new Error('Youdao returned no translation');
 
     return {
       text: translated,
       providerId: 'youdao',
-      provider: '有道翻译',
+      provider: 'Youdao Translate',
       target: request.target,
       detectedSource: request.source
     };

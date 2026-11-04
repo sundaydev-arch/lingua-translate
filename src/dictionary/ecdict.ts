@@ -76,7 +76,7 @@ export class EcdictDictionary {
   async phonetics(word: string): Promise<Phonetic[]> {
     const entry = await this.lookup(word);
     const value = normalizePhonetic(entry?.phonetic || '');
-    return value ? [{ text: value, label: '英', audio: '' }] : [];
+    return value ? [{ text: value, label: 'UK', audio: '' }] : [];
   }
 
   async senses(word: string): Promise<Sense[]> {

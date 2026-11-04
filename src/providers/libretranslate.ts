@@ -29,8 +29,8 @@ export const libreTranslateProvider: Provider = {
         proxy: config.proxy,
         timeout: 10000
       });
-      if (data?.error) throw new Error(`LibreTranslate：${data.error}`);
-      if (!data?.translatedText) throw new Error('LibreTranslate 未返回译文');
+      if (data?.error) throw new Error(`LibreTranslate: ${data.error}`);
+      if (!data?.translatedText) throw new Error('LibreTranslate returned no translation');
       results.push(data.translatedText);
     }
 

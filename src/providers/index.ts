@@ -80,7 +80,7 @@ export async function translateText(
   options: TranslateOptions = {}
 ): Promise<TranslationOutcome> {
   const trimmed = text.trim();
-  if (!trimmed) throw new Error('没有可翻译的文本');
+  if (!trimmed) throw new Error('Nothing to translate');
 
   const direction = resolveDirection(trimmed, options.target || config.targetLanguage);
   const source = options.source || (direction.source === 'unknown' ? 'auto' : direction.source);
@@ -88,7 +88,7 @@ export async function translateText(
 
   const providers = pickProviders(config);
   if (!providers.length) {
-    throw new Error('没有可用的翻译引擎，请在 Lingua 设置中配置 API Key 或选择 auto');
+    throw new Error('No translation engine is available; configure an API key or choose auto in Lingua settings');
   }
 
   const errors: string[] = [];
@@ -97,11 +97,11 @@ export async function translateText(
       return await provider.translate({ text: trimmed, source, target }, config);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      errors.push(`${provider.name}：${message}`);
+      errors.push(`${provider.name}: ${message}`);
     }
   }
 
-  throw new Error(errors.join('；') || '所有翻译引擎均不可用');
+  throw new Error(errors.join('; ') || 'All translation engines are unavailable');
 }
 
 export function providerById(id: EngineId): Provider {

@@ -32,6 +32,8 @@ const FIELDS: Field[] = [
   { key: 'cache.ttlHours', type: 'number', min: 1, max: 8760 },
   { key: 'cache.maxEntries', type: 'number', min: 100, max: 100000 },
   { key: 'proxy', type: 'string' },
+  { key: 'ocr.apiKey', type: 'string' },
+  { key: 'ocr.language', type: 'string' },
   { key: 'libretranslate.url', type: 'string' },
   { key: 'libretranslate.apiKey', type: 'string' },
   { key: 'deepl.apiKey', type: 'string' },
@@ -52,14 +54,14 @@ const FIELDS: Field[] = [
 const ENGINE_LABELS: Record<'zh-CN' | 'en', Record<string, string>> = {
   'zh-CN': {
     auto: '自动（推荐）',
-    google: 'Google 翻译',
-    bing: 'Bing 翻译',
+    google: 'Google Translate',
+    bing: 'Bing Translate',
     mymemory: 'MyMemory',
     libretranslate: 'LibreTranslate',
     deepl: 'DeepL',
-    azure: 'Azure 翻译',
-    baidu: '百度翻译',
-    youdao: '有道翻译',
+    azure: 'Azure Translator',
+    baidu: 'Baidu Translate',
+    youdao: 'Youdao Translate',
     openai: 'OpenAI',
     claude: 'Claude',
     gemini: 'Gemini'
@@ -142,6 +144,8 @@ export class SettingsPanel {
       'cache.ttlHours': config.cacheTtlHours,
       'cache.maxEntries': config.cacheMaxEntries,
       uiLanguage: config.uiLanguage,
+      'ocr.apiKey': config.ocrApiKey,
+      'ocr.language': config.ocrLanguage,
       'libretranslate.url': config.libretranslateUrl,
       'libretranslate.apiKey': config.libretranslateApiKey,
       'deepl.apiKey': config.deeplApiKey,
@@ -295,6 +299,15 @@ export class SettingsPanel {
       ${input('proxy')}
     </div>
     <div class="hint">${escape(t('proxyHint'))}</div>
+  </section>
+
+  <section>
+    <h2>${escape(s.sectionOcr)}</h2>
+    <div class="grid">
+      ${input('ocr.apiKey')}
+      ${input('ocr.language')}
+    </div>
+    <div class="hint">${escape(t('ocrHint'))}</div>
   </section>
 
   <section>
@@ -472,7 +485,7 @@ export class SettingsPanel {
   }
 }
 
-const VERSION = '0.3.0';
+const VERSION = '0.4.0';
 
 function escape(value: string): string {
   return value.replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch] as string));

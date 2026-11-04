@@ -108,7 +108,7 @@ function direct(
       }
     );
 
-    req.on('timeout', () => req.destroy(new Error('请求超时')));
+    req.on('timeout', () => req.destroy(new Error('Request timed out')));
     req.on('error', reject);
     if (options.body !== undefined) req.write(options.body);
     req.end();
@@ -126,11 +126,11 @@ function viaProxy(
       target = new URL(url);
       proxy = new URL(options.proxy);
     } catch {
-      reject(new Error('代理地址格式不正确，应形如 http://127.0.0.1:7890'));
+      reject(new Error('Invalid proxy URL; expected something like http://127.0.0.1:7890'));
       return;
     }
     if (target.protocol !== 'https:') {
-      reject(new Error('代理仅支持 HTTPS 目标地址'));
+      reject(new Error('The proxy only supports HTTPS targets'));
       return;
     }
 
@@ -163,7 +163,7 @@ function viaProxy(
     connectRequest.on('connect', (response, socket) => {
       if (response.statusCode !== 200) {
         socket.destroy();
-        fail(new Error(`代理连接失败（HTTP ${response.statusCode}）`));
+        fail(new Error(`Proxy connection failed (HTTP ${response.statusCode})`));
         return;
       }
 
@@ -180,7 +180,7 @@ function viaProxy(
       });
 
       const chunks: Buffer[] = [];
-      secureSocket.setTimeout(options.timeout, () => secureSocket.destroy(new Error('请求超时')));
+      secureSocket.setTimeout(options.timeout, () => secureSocket.destroy(new Error('Request timed out')));
       secureSocket.on('data', (chunk: Buffer) => chunks.push(chunk));
       secureSocket.on('end', () => {
         if (settled) return;
@@ -194,7 +194,7 @@ function viaProxy(
       secureSocket.on('error', fail);
     });
 
-    connectRequest.on('timeout', () => connectRequest.destroy(new Error('代理连接超时')));
+    connectRequest.on('timeout', () => connectRequest.destroy(new Error('Proxy connection timed out')));
     connectRequest.on('error', fail);
     connectRequest.end();
   });
@@ -204,7 +204,7 @@ function viaProxy(
 function parseRaw(raw: Buffer): HttpResponse {
   const text = raw.toString('latin1');
   const split = text.indexOf('\r\n\r\n');
-  if (split < 0) throw new Error('代理返回的数据不完整');
+  if (split < 0) throw new Error('Incomplete data from the proxy');
 
   const head = text.slice(0, split);
   const body = text.slice(split + 4);
@@ -241,7 +241,7 @@ export async function getJson<T = unknown>(url: string, options: HttpRequestOpti
   try {
     return JSON.parse(response.body.toString('utf8')) as T;
   } catch {
-    throw new Error('服务返回的不是合法 JSON');
+    throw new Error('Service did not return valid JSON');
   }
 }
 
@@ -264,7 +264,7 @@ export async function postJson<T = unknown>(
   try {
     return JSON.parse(response.body.toString('utf8')) as T;
   } catch {
-    throw new Error('服务返回的不是合法 JSON');
+    throw new Error('Service did not return valid JSON');
   }
 }
 
@@ -283,7 +283,7 @@ export async function postForm<T = unknown>(
   try {
     return JSON.parse(response.body.toString('utf8')) as T;
   } catch {
-    throw new Error('服务返回的不是合法 JSON');
+    throw new Error('Service did not return valid JSON');
   }
 }
 

@@ -33,7 +33,7 @@ export const claudeProvider: Provider = {
     );
 
     const text = data?.content?.find((item) => item.type === 'text')?.text?.trim();
-    if (!text) throw new Error(`Claude 未返回译文${data?.error?.message ? `：${data.error.message}` : ''}`);
+    if (!text) throw new Error(`Claude returned no text${data?.error?.message ? `: ${data.error.message}` : ''}`);
 
     return {
       text,

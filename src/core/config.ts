@@ -88,7 +88,9 @@ export function readConfig(): LinguaConfig {
     claudeBaseUrl: getString(section, 'claude.baseUrl', 'https://api.anthropic.com') || 'https://api.anthropic.com',
     claudeModel: getString(section, 'claude.model', 'claude-3-5-haiku-latest') || 'claude-3-5-haiku-latest',
     geminiApiKey: getString(section, 'gemini.apiKey', ''),
-    geminiModel: getString(section, 'gemini.model', 'gemini-1.5-flash') || 'gemini-1.5-flash'
+    geminiModel: getString(section, 'gemini.model', 'gemini-1.5-flash') || 'gemini-1.5-flash',
+    ocrApiKey: getString(section, 'ocr.apiKey', 'helloworld') || 'helloworld',
+    ocrLanguage: getString(section, 'ocr.language', 'eng') || 'eng'
   };
 }
 

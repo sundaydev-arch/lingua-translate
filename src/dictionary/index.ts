@@ -42,7 +42,7 @@ export async function lookupSelection(
   options: LookupOptions = {}
 ): Promise<LookupResult> {
   const value = text.trim();
-  if (!value) return { kind: 'error', message: '没有可翻译的文本' };
+  if (!value) return { kind: 'error', message: 'Nothing to translate' };
 
   const glossaryHit = context.glossary.lookupPhrase(value);
   if (glossaryHit && !isIdentifier(value) && !isWordLike(value)) {
@@ -52,9 +52,9 @@ export async function lookupSelection(
       translation: glossaryHit,
       targetLang: context.config.targetLanguage,
       sourceLang: detectLanguage(value),
-      badge: '术语表',
+      badge: 'glossary',
       autoPlay: false,
-      sources: '项目术语表'
+      sources: 'Project glossary'
     };
   }
 
@@ -91,10 +91,10 @@ export async function lookupWord(
     phonetics.push({ text: value, label, audio: audio || '' });
   };
 
-  if (youdao?.usphone) addPhonetic(youdao.usphone, '美');
-  if (youdao?.ukphone) addPhonetic(youdao.ukphone, '英');
+  if (youdao?.usphone) addPhonetic(youdao.usphone, 'US');
+  if (youdao?.ukphone) addPhonetic(youdao.ukphone, 'UK');
   for (const item of dictionaryApi?.phonetics || []) addPhonetic(item.text, undefined, item.audio);
-  if (!phonetics.length && offline?.phonetic) addPhonetic(offline.phonetic, '英');
+  if (!phonetics.length && offline?.phonetic) addPhonetic(offline.phonetic, 'UK');
 
   const senses: Sense[] = [];
   if (youdao?.senses?.length) senses.push(...youdao.senses);
@@ -118,9 +118,9 @@ export async function lookupWord(
   if (!translation && machine) translation = machine.text;
 
   const sources: string[] = [];
-  if (glossaryTranslation) sources.push('项目术语表');
+  if (glossaryTranslation) sources.push('Project glossary');
   if (offline) sources.push('ECDICT');
-  if (youdao) sources.push('有道词典');
+  if (youdao) sources.push('Youdao Dictionary');
   if (dictionaryApi) sources.push('dictionaryapi.dev');
   if (machine) sources.push(machine.provider);
 
@@ -133,7 +133,7 @@ export async function lookupWord(
     translation,
     targetLang: machine?.target || config.targetLanguage,
     autoPlay: config.autoPlay,
-    sources: sources.join(' · ') || '离线词库',
+    sources: sources.join(' · ') || 'Offline dictionary',
     offline: Boolean(offline),
     identifier: false
   };
@@ -210,9 +210,9 @@ async function lookupIdentifier(
   if (!translation) translation = items.filter((item) => item.translation).map((item) => `${item.word}：${item.translation}`).join('；');
 
   const sources: string[] = [];
-  if (items.some((item) => item.fromGlossary)) sources.push('术语表');
-  if (items.some((item) => item.translation && !item.fromGlossary)) sources.push('ECDICT / 有道词典');
-  if (translation && options.translate !== false) sources.push('机器翻译');
+  if (items.some((item) => item.fromGlossary)) sources.push('Glossary');
+  if (items.some((item) => item.translation && !item.fromGlossary)) sources.push('ECDICT / Youdao');
+  if (translation && options.translate !== false) sources.push('Machine translation');
 
   return {
     kind: 'identifier',
@@ -234,7 +234,7 @@ async function lookupText(
   const glossaryHit = glossary.lookupPhrase(text);
 
   let translation = glossaryHit || '';
-  let provider = glossaryHit ? '项目术语表' : '';
+  let provider = glossaryHit ? 'Project glossary' : '';
 
   if (!translation) {
     const outcome = await translateText(text, config);
@@ -248,7 +248,7 @@ async function lookupText(
     translation,
     targetLang: config.targetLanguage,
     sourceLang,
-    badge: sourceLang === 'zh-CN' && text.length <= 14 && !/[。！？；，,.;!?]/.test(text) ? '词语' : '整句',
+    badge: sourceLang === 'zh-CN' && text.length <= 14 && !/[。！？；，,.;!?]/.test(text) ? 'phrase' : 'sentence',
     autoPlay: config.autoPlay,
     sources: provider
   };
@@ -270,7 +270,7 @@ async function lookupText(
             const ipa = normalizePhonetic((youdao && (youdao.usphone || youdao.ukphone)) || '');
             if (ipa) {
               result.englishPhonetic = ipa;
-              result.sources = `${provider} · 有道词典`;
+              result.sources = `${provider} · Youdao Dictionary`;
             }
           } catch {
             // Phonetics are just a nice-to-have
@@ -315,9 +315,9 @@ export async function lookupHover(text: string, context: DictionaryContext): Pro
       translation: glossaryHit,
       targetLang: context.config.targetLanguage,
       sourceLang: detectLanguage(value),
-      badge: '术语表',
+      badge: 'glossary',
       autoPlay: false,
-      sources: '项目术语表'
+      sources: 'Project glossary'
     };
   }
 

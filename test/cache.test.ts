@@ -20,7 +20,7 @@ const sample: LookupResult = {
   translation: '你好',
   targetLang: 'zh-CN',
   sourceLang: 'en',
-  badge: '词语',
+  badge: 'phrase',
   autoPlay: false,
   sources: 'test'
 };

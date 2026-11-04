@@ -1,3 +1,5 @@
+import { promises as fs } from 'fs';
+import * as path from 'path';
 import * as vscode from 'vscode';
 import type { DiskCache } from '../core/cache';
 import { uiLanguage, updateSetting } from '../core/config';
@@ -12,6 +14,8 @@ import type { SettingsPanel } from './settingsPanel';
 import type { VocabularyPanel, VocabularyStore } from './vocabulary';
 import { entryFromResult } from './vocabulary';
 import type { SpeechService } from '../speech/tts';
+import { findTranslatableFiles, isTranslatableFile, isTranslatedOutput, translateDocument, translatedPath } from './batch';
+import { captureImage, cleanupImage, recognizeImage } from './ocr';
 
 const MAX_TEXT_LENGTH = 5000;
 const WORD_PATTERN = /[\p{L}\p{N}_$'’\-]+/u;
@@ -135,6 +139,60 @@ export function registerCommands(deps: CommandDeps): vscode.Disposable[] {
     }
   }
 
+  async function translateBatch(files: string[]): Promise<void> {
+    const s = strings();
+    const config = deps.getConfig();
+    let completed = 0;
+
+    try {
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: 'Lingua',
+          cancellable: false
+        },
+        async (progress) => {
+          for (const file of files) {
+            progress.report({
+              message: format(s.batchProgress, { name: path.basename(file) }),
+              increment: 100 / files.length
+            });
+            const content = await fs.readFile(file, 'utf8');
+            const translated = await translateDocument(content, config);
+            await fs.writeFile(translatedPath(file, config.targetLanguage), translated, 'utf8');
+            deps.log(`Batch translated ${file} → ${config.targetLanguage}`);
+            completed += 1;
+          }
+        }
+      );
+      void vscode.window.showInformationMessage(format(s.batchDone, { count: completed }));
+    } catch (error) {
+      void vscode.window.showWarningMessage(format(s.batchFailed, { reason: (error as Error).message }));
+    }
+  }
+
+  async function ocrScreenshot(): Promise<void> {
+    const s = strings();
+    const image = await captureImage();
+    if (!image) return;
+
+    deps.statusBar.text = '$(sync~spin) Lingua OCR';
+    try {
+      const text = await recognizeImage(image.path, deps.getConfig());
+      if (!text.trim()) {
+        void vscode.window.showInformationMessage(s.ocrEmpty);
+        return;
+      }
+      deps.log(`OCR recognized ${text.length} characters`);
+      await openResult(text);
+    } catch (error) {
+      void vscode.window.showWarningMessage(format(s.ocrFailed, { reason: (error as Error).message }));
+    } finally {
+      await cleanupImage(image);
+      deps.statusBar.text = '$(book) Lingua';
+    }
+  }
+
   return [
     vscode.commands.registerCommand('linguaTranslate.translateSelection', async () => {
       const text = await selectionText();
@@ -189,6 +247,46 @@ export function registerCommands(deps: CommandDeps): vscode.Disposable[] {
     }),
     vscode.commands.registerCommand('linguaTranslate.showMenu', async () => {
       await showMenu();
+    }),
+    vscode.commands.registerCommand('linguaTranslate.ocrScreenshot', async () => {
+      await ocrScreenshot();
+    }),
+    vscode.commands.registerCommand('linguaTranslate.translateFile', async () => {
+      const s = strings();
+      const picked = await vscode.window.showOpenDialog({
+        canSelectMany: true,
+        openLabel: s.menuTranslateFile,
+        filters: { 'Markdown / Text': ['md', 'markdown', 'txt'] },
+        title: s.batchPickFile
+      });
+      if (!picked?.length) return;
+      const files = picked.map((uri) => uri.fsPath).filter(isTranslatableFile);
+      if (!files.length) {
+        void vscode.window.showInformationMessage(s.batchNoFiles);
+        return;
+      }
+      await translateBatch(files);
+    }),
+    vscode.commands.registerCommand('linguaTranslate.translateFolder', async () => {
+      const s = strings();
+      const picked = await vscode.window.showOpenDialog({
+        canSelectFiles: false,
+        canSelectFolders: true,
+        canSelectMany: false,
+        openLabel: s.menuTranslateFolder,
+        title: s.batchPickFolder
+      });
+      if (!picked?.length) return;
+      const config = deps.getConfig();
+      const folder = picked[0].fsPath;
+      const files = (await findTranslatableFiles(folder)).filter(
+        (file) => !isTranslatedOutput(file, config.targetLanguage)
+      );
+      if (!files.length) {
+        void vscode.window.showInformationMessage(s.batchNoFiles);
+        return;
+      }
+      await translateBatch(files);
     })
   ];
 
@@ -230,6 +328,9 @@ export function registerCommands(deps: CommandDeps): vscode.Disposable[] {
     const items: Array<vscode.QuickPickItem & { run: string }> = [
       { label: `$(replace) ${s.menuTranslateSelection}`, run: 'linguaTranslate.translateSelection' },
       { label: `$(clipboard) ${s.menuTranslateClipboard}`, run: 'linguaTranslate.translateClipboard' },
+      { label: `$(device-camera) ${s.menuOcr}`, run: 'linguaTranslate.ocrScreenshot' },
+      { label: `$(file) ${s.menuTranslateFile}`, run: 'linguaTranslate.translateFile' },
+      { label: `$(folder) ${s.menuTranslateFolder}`, run: 'linguaTranslate.translateFolder' },
       { label: `$(book) ${s.menuVocabulary}`, run: 'linguaTranslate.openVocabulary' },
       { label: `$(history) ${s.menuHistory}`, run: 'linguaTranslate.showHistory' },
       { label: `$(gear) ${s.menuSettings}`, run: 'linguaTranslate.openSettings' },
